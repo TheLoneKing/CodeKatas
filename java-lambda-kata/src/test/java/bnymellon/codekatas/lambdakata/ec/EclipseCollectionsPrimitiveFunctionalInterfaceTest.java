@@ -43,14 +43,7 @@ public class EclipseCollectionsPrimitiveFunctionalInterfaceTest
     {
         var adder = new LongAdder();
         // TODO - Convert the anonymous inner class to a lambda
-        var procedure = new IntProcedure()
-        {
-            @Override
-            public void value(int value)
-            {
-                adder.add((long) value);
-            }
-        };
+        var procedure = (IntProcedure) value -> adder.add((long) value);
         IntInterval.oneTo(5).forEach(procedure);
         Assert.assertEquals(15, adder.longValue());
     }
@@ -60,14 +53,7 @@ public class EclipseCollectionsPrimitiveFunctionalInterfaceTest
     {
         var adder = new LongAdder();
         // TODO - Convert the anonymous inner class to a lambda
-        var procedure = new LongProcedure()
-        {
-            @Override
-            public void value(long value)
-            {
-                adder.add(value);
-            }
-        };
+        var procedure = (LongProcedure) value -> adder.add(value);
         LongLists.mutable.with(1, 2, 3, 4, 5).forEach(procedure);
         Assert.assertEquals(15, adder.longValue());
     }
@@ -77,14 +63,7 @@ public class EclipseCollectionsPrimitiveFunctionalInterfaceTest
     {
         var adder = new DoubleAdder();
         // TODO - Convert the anonymous inner class to a lambda
-        var procedure = new DoubleProcedure()
-        {
-            @Override
-            public void value(double value)
-            {
-                adder.add(value);
-            }
-        };
+        var procedure = (DoubleProcedure) value -> adder.add(value);
         DoubleLists.mutable.with(1.0d, 2.0d, 3.0d, 4.0d, 5.0d).forEach(procedure);
         Assert.assertEquals(15.0, adder.doubleValue(), 0.0);
     }
@@ -93,14 +72,7 @@ public class EclipseCollectionsPrimitiveFunctionalInterfaceTest
     public void IntPredicate()
     {
         // TODO - Convert the anonymous inner class to a lambda
-        var predicate = new IntPredicate()
-        {
-            @Override
-            public boolean accept(int value)
-            {
-                return value % 2 == 0;
-            }
-        };
+        var predicate = (IntPredicate) i -> i % 2 == 0;
         IntInterval interval = IntInterval.oneTo(5);
         ImmutableIntList evens = interval.select(predicate);
         Assert.assertEquals(IntLists.mutable.with(2, 4), evens);
@@ -120,14 +92,7 @@ public class EclipseCollectionsPrimitiveFunctionalInterfaceTest
     public void LongPredicate()
     {
         // TODO - Convert the anonymous inner class to a lambda
-        var predicate = new LongPredicate()
-        {
-            @Override
-            public boolean accept(long value)
-            {
-                return value % 2 == 0;
-            }
-        };
+        var predicate = (LongPredicate) l -> l % 2 == 0;
         var list = LongLists.mutable.with(1, 2, 3, 4, 5);
         var evens = list.select(predicate);
         Assert.assertEquals(LongLists.mutable.with(2, 4), evens);
@@ -145,14 +110,7 @@ public class EclipseCollectionsPrimitiveFunctionalInterfaceTest
     public void DoublePredicate()
     {
         // TODO - Convert the anonymous inner class to a lambda
-        var predicate = new DoublePredicate()
-        {
-            @Override
-            public boolean accept(double value)
-            {
-                return value > 3.0;
-            }
-        };
+        var predicate = (DoublePredicate) d -> d > 3.0;
         var list = DoubleLists.mutable.with(1.0, 2.0, 3.0, 4.0, 5.0);
         var greaterThan = list.select(predicate);
         Assert.assertEquals(DoubleLists.mutable.with(4.0d, 5.0d), greaterThan);
