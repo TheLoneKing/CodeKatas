@@ -18,16 +18,29 @@ package bnymellon.codekatas.codepointkata;
 
 import org.eclipse.collections.api.bag.primitive.CharBag;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.list.primitive.MutableIntList;
+import org.eclipse.collections.impl.collector.Collectors2;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.primitive.CharBags;
+import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
+import org.eclipse.collections.impl.string.immutable.CharAdapter;
+import org.eclipse.collections.impl.string.immutable.CodePointList;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 
 public class CodePointKataTest
 {
     @Test
     public void translateTheSecretMessage() throws Exception
     {
-        var url = this.getClass().getClassLoader().getResource("codepoints.txt");
+        var path = Paths.get(this.getClass().getClassLoader().getResource("codepoints.txt").toURI());
+        var lines = Files.lines(path);
         // Hint: Look at Paths.get(URI)
         // Hint: Look at Files.lines(Path) which returns a Stream<String>
 
@@ -37,7 +50,13 @@ public class CodePointKataTest
         // Hint: Look at String.split(String)
         // Hint: Look at new String(int[], int, int) or CodePointList.from(int...)
         // Hint: Look at Collectors2.toImmutableList()
-        ImmutableList<String> list = null;
+        ImmutableList<String> list = lines.map(line -> {
+            var codePoints = Arrays.asList(line.split(" "))
+                    .stream()
+                    .map(Integer::valueOf)
+                    .collect(IntArrayList::new, MutableIntList::add, MutableIntList::addAll);
+            return CodePointList.from(codePoints).toString();
+        }).collect(Collectors2.toImmutableList());
 
         // Write the code necessary to collect the list of Strings into a bag of characters
         // Iterate over each String collecting it's characters into the characters Bag
@@ -46,11 +65,13 @@ public class CodePointKataTest
         // Hint: Look at ImmutableList.collect(Function)
         // Hint: Look at ImmutableList.each(Procedure) or ImmutableList.injectInto(IV, Function2)
         var characters = CharBags.mutable.empty();
+        list.tap(strLine -> characters.addAll(CharAdapter.adapt(strLine)));
 
         Assert.assertTrue(this.expectedBagOfCharacters(characters));
 
         // Output the list of strings to a file and read the secret message
         // Hint: Look at Files.write() or FileWriter
+        Files.write(path, list, StandardOpenOption.APPEND);
     }
 
     private boolean expectedBagOfCharacters(CharBag actual)
@@ -100,6 +121,6 @@ public class CodePointKataTest
     private String convertCodePointsToString(int... codePoints)
     {
         // Hint: Look at new String(int[], int, int) or CodePointList.from(int...)
-        return "";
+        return CodePointList.from(codePoints).toString();
     }
 }
